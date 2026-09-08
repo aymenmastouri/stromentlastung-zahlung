@@ -1,0 +1,22 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:zahlung;DB_CLOSE_DELAY=-1
+    username: sa
+    password: ""
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:9091/realms/stromentlastung
+          jwk-set-uri: http://localhost:9091/realms/stromentlastung/protocol/openid-connect/certs
+stromentlastung:
+  heute: 2026-09-08
+  ui-origin: http://localhost:4202
+  dienste:
+    unternehmen: http://localhost:8091/api/unternehmen
+    bescheid: http://localhost:8093/api/bescheide
+    zahlung: http://localhost:8094/api/zahlungen

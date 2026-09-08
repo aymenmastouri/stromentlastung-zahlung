@@ -1,0 +1,37 @@
+spring:
+  application:
+    name: stromentlastung-zahlung
+  datasource:
+    url: jdbc:h2:file:${STROMENTLASTUNG_DATA_DIR:./data}/zahlung;AUTO_SERVER=TRUE
+    username: sa
+    password: ""
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  flyway:
+    locations: classpath:db/migration
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${STROMENTLASTUNG_ISSUER:http://localhost:9091/realms/stromentlastung}
+          jwk-set-uri: ${STROMENTLASTUNG_JWKS_URI:${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs}
+
+server:
+  port: ${STROMENTLASTUNG_ZAHLUNG_PORT:8094}
+  servlet:
+    context-path: /api/zahlungen
+
+stromentlastung:
+  heute: ${STROMENTLASTUNG_HEUTE:}
+  ui-origin: ${STROMENTLASTUNG_UI_ORIGIN:http://localhost:4202}
+  dienste:
+    unternehmen: ${STROMENTLASTUNG_UNTERNEHMEN_URL:http://localhost:8091/api/unternehmen}
+    bescheid: ${STROMENTLASTUNG_BESCHEID_URL:http://localhost:8093/api/bescheide}
+    zahlung: ${STROMENTLASTUNG_ZAHLUNG_URL:http://localhost:8094/api/zahlungen}
+
+springdoc:
+  default-produces-media-type: application/json
+  swagger-ui:
+    path: /swagger-ui.html
