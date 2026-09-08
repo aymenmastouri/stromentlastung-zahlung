@@ -26,7 +26,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
  * Zustandsloser Resource Server: jede Anfrage trägt ein Keycloak-Token. Die
  * Rollen des Fachkonzepts sind Realm-Rollen und werden zu ROLE_-Autoritäten;
  * die Autorisierung steht als @PreAuthorize an den Endpunkten. Anonym ist nur
- * die API-Beschreibung. Diese Klasse ist in jedem Dienst gleich (Architektur A-04).
+ * die API-Beschreibung und die H2-Konsole. Diese Klasse ist in jedem Dienst gleich (Architektur A-04).
  */
 @Configuration
 @EnableWebSecurity
@@ -47,7 +47,10 @@ public class SecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                .requestMatchers("/h2-console/**").permitAll()
                 .anyRequest().authenticated())
+            // Die H2-Konsole (nur lokal erreichbar) arbeitet mit Frames desselben Ursprungs.
+            .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
             .oauth2ResourceServer(oauth -> oauth.jwt(jwt -> jwt.jwtAuthenticationConverter(realmRollen())));
         return http.build();
     }
