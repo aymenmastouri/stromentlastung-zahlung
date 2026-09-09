@@ -16,7 +16,9 @@ spring:
       enabled: true
       path: /h2-console
       settings:
-        web-allow-others: false
+        # Läuft der Dienst in einem Container, ist jeder Zugriff vom Rechner aus für H2
+        # ein entfernter. Nur dort wird das freigegeben, und der Port hört auf 127.0.0.1.
+        web-allow-others: ${STROMENTLASTUNG_H2_CONSOLE_REMOTE:false}
   security:
     oauth2:
       resourceserver:
