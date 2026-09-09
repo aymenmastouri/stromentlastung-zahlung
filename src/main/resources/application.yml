@@ -31,6 +31,11 @@ server:
 
 stromentlastung:
   heute: ${STROMENTLASTUNG_HEUTE:}
+  # Herkunft des laufenden Standes. Wird beim Bau des Abbilds gesetzt und unverändert
+  # gemeldet; wo nichts gesetzt ist, sagt der Dienst das auch.
+  bau:
+    revision: ${STROMENTLASTUNG_BUILD_REVISION:unbekannt}
+    referenz: ${STROMENTLASTUNG_BUILD_REF:unbekannt}
   ui-origin: ${STROMENTLASTUNG_UI_ORIGIN:http://localhost:4202}
   dienste:
     unternehmen: ${STROMENTLASTUNG_UNTERNEHMEN_URL:http://localhost:8091/api/unternehmen}
