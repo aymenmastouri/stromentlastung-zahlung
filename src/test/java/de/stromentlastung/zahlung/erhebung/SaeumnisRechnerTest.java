@@ -72,4 +72,13 @@ class SaeumnisRechnerTest {
         assertThat(s.bemessungsgrundlageCent()).isEqualTo(300000);
         assertThat(s.zuschlagCent()).isEqualTo(3000);
     }
+
+    @Test
+    void nicht_durch_fuenfzig_euro_teilbarer_betrag_wird_abgerundet() {
+        Saeumnis s = SaeumnisRechner.berechne(623000L, FAELLIG, List.of(), LocalDate.of(2026, 9, 8));
+        assertThat(s.angefangeneMonate()).isEqualTo(6);
+        assertThat(s.bemessungsgrundlageCent()).isEqualTo(620000L);
+        assertThat(s.zuschlagCent()).isEqualTo(37200L);
+        assertThat(s.innerhalbSchonfrist()).isFalse();
+    }
 }

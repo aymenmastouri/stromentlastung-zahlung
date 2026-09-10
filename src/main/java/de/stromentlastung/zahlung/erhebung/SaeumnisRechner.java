@@ -18,6 +18,8 @@ public final class SaeumnisRechner {
 
     public static final int SCHONFRIST_TAGE = 3;
 
+    private static final long BEMESSUNGSSCHRITT_CENT = 5000L;
+
     public record Rueckzahlung(LocalDate datum, long betragCent, Zahlungsweg weg) {
     }
 
@@ -33,23 +35,24 @@ public final class SaeumnisRechner {
         long rueckstaendig = Math.max(0, forderungCent - rueckgezahlt);
         long rechtzeitig = rueckzahlungen.stream().filter(r -> !r.datum().isAfter(faelligkeit)).mapToLong(Rueckzahlung::betragCent).sum();
         long bemessung = Math.max(0, forderungCent - rechtzeitig);
+        long abgerundet = Math.floorDiv(bemessung, BEMESSUNGSSCHRITT_CENT) * BEMESSUNGSSCHRITT_CENT;
 
         Rueckzahlung letzte = rueckzahlungen.isEmpty() ? null : rueckzahlungen.get(rueckzahlungen.size() - 1);
         LocalDate stichtag = rueckstaendig == 0 && letzte != null ? letzte.datum() : heute;
 
         if (!stichtag.isAfter(faelligkeit) || bemessung == 0) {
-            return new Saeumnis(0, bemessung, 0, rueckgezahlt, rueckstaendig, stichtag, false);
+            return new Saeumnis(0, abgerundet, 0, rueckgezahlt, rueckstaendig, stichtag, false);
         }
         boolean schonfrist = rueckstaendig == 0 && letzte != null && letzte.weg() == Zahlungsweg.UEBERWEISUNG
                 && !stichtag.isAfter(faelligkeit.plusDays(SCHONFRIST_TAGE));
         if (schonfrist) {
-            return new Saeumnis(0, bemessung, 0, rueckgezahlt, rueckstaendig, stichtag, true);
+            return new Saeumnis(0, abgerundet, 0, rueckgezahlt, rueckstaendig, stichtag, true);
         }
         int monate = 0;
         for (LocalDate grenze = faelligkeit; grenze.isBefore(stichtag); grenze = grenze.plusMonths(1)) {
             monate++;
         }
-        long zuschlag = monate * bemessung / 100;
-        return new Saeumnis(monate, bemessung, zuschlag, rueckgezahlt, rueckstaendig, stichtag, false);
+        long zuschlag = (abgerundet / 100) * monate;
+        return new Saeumnis(monate, abgerundet, zuschlag, rueckgezahlt, rueckstaendig, stichtag, false);
     }
 }
