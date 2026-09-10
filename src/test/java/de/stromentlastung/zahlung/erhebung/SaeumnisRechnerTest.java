@@ -66,6 +66,16 @@ class SaeumnisRechnerTest {
     }
 
     @Test
+    void ein_betrag_nicht_durch_fuenfzig_euro_teilbar_wird_abgerundet() {
+        var ergebnis = SaeumnisRechner.berechne(623000L, FAELLIG, List.of(), LocalDate.of(2026, 9, 8));
+        assertThat(ergebnis.angefangeneMonate()).isEqualTo(6);
+        assertThat(ergebnis.bemessungsgrundlageCent()).isEqualTo(620000L);
+        assertThat(ergebnis.zuschlagCent()).isEqualTo(37200L);
+        assertThat(ergebnis.rueckstaendigCent()).isEqualTo(623000L);
+        assertThat(ergebnis.innerhalbSchonfrist()).isFalse();
+    }
+
+    @Test
     void eine_rechtzeitige_teilzahlung_senkt_die_bemessungsgrundlage() {
         Saeumnis s = SaeumnisRechner.berechne(FORDERUNG, FAELLIG,
                 List.of(new Rueckzahlung(FAELLIG.minusDays(1), 320000, Zahlungsweg.UEBERWEISUNG)), LocalDate.of(2026, 4, 1));
