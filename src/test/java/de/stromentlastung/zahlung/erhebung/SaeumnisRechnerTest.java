@@ -17,6 +17,14 @@ class SaeumnisRechnerTest {
     private static final LocalDate FAELLIG = LocalDate.of(2026, 3, 13);
 
     @Test
+    void nicht_durch_fuenfzig_euro_teilbare_bemessungsgrundlage_wird_abgerundet() {
+        Saeumnis s = SaeumnisRechner.berechne(623000, FAELLIG, List.of(), LocalDate.of(2026, 9, 8));
+        assertThat(s.bemessungsgrundlageCent()).isEqualTo(620000);
+        assertThat(s.zuschlagCent()).isEqualTo(37200);
+        assertThat(s.angefangeneMonate()).isEqualTo(6);
+    }
+
+    @Test
     void am_faelligkeitstag_keine_saeumnis() {
         Saeumnis s = SaeumnisRechner.berechne(FORDERUNG, FAELLIG, List.of(), FAELLIG);
         assertThat(s.angefangeneMonate()).isZero();
