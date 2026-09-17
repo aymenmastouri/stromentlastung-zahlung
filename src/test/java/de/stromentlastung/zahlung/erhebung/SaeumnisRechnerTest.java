@@ -60,8 +60,9 @@ class SaeumnisRechnerTest {
 
     @Test
     void sechs_angefangene_monate_am_achten_september() {
-        Saeumnis s = SaeumnisRechner.berechne(FORDERUNG, FAELLIG, List.of(), LocalDate.of(2026, 9, 8));
+        Saeumnis s = SaeumnisRechner.berechne(623000, FAELLIG, List.of(), LocalDate.of(2026, 9, 8));
         assertThat(s.angefangeneMonate()).isEqualTo(6);
+        assertThat(s.bemessungsgrundlageCent()).isEqualTo(620000);
         assertThat(s.zuschlagCent()).isEqualTo(37200);
     }
 
